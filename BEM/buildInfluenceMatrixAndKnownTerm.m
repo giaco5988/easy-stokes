@@ -77,7 +77,6 @@ function [A,b,nnx,nny] = buildInfluenceMatrixAndKnownTerm(GXX,GXY,GYX,GYY,A11,A1
           
       elseif PARAM.typeBC(i)==2 || PARAM.typeBC(i)==7    %prescribe normal stresses due to surface tension
           
-          %error('not implemented')
           visc = PARAM.visc(i);
           
           %compute curvature
@@ -156,6 +155,26 @@ function [A,b,nnx,nny] = buildInfluenceMatrixAndKnownTerm(GXX,GXY,GYX,GYY,A11,A1
           %save normal vector
           nnx{i} = nx;
           nny{i} = ny;
+          
+      elseif PARAM.typeBC(i)==8    %prescribe axial stress and radial velocity
+          
+          %double layer and single layer potential
+          A(1:2:end-1-addSize,2*startMatrix-1:2:2*endMatrix-1) = A11{i};
+          A(1:2:end-1-addSize,2*startMatrix:2:2*endMatrix) = -GXY{i};
+          A(2:2:end-addSize,2*startMatrix-1:2:2*endMatrix-1) = A21{i};
+          A(2:2:end-addSize,2*startMatrix:2:2*endMatrix) = -GYY{i};
+          U(1:2:end-1-addSize,2*startMatrix-1:2:2*endMatrix-1) = -GXX{i};
+          U(1:2:end-1-addSize,2*startMatrix:2:2*endMatrix) = A12{i};
+          U(2:2:end-addSize,2*startMatrix-1:2:2*endMatrix-1) = -GYX{i};
+          U(2:2:end-addSize,2*startMatrix:2:2*endMatrix) = A22{i};
+          
+          %add term on the diagonal
+          A(2*startMatrix-1:2:2*endMatrix,2*startMatrix-1:2:2*endMatrix) = A(2*startMatrix-1:2:2*endMatrix,2*startMatrix-1:2:2*endMatrix) - diag(4*pi*ones(nnn(i),1));
+          U(2*startMatrix:2:2*endMatrix,2*startMatrix:2:2*endMatrix) = U(2*startMatrix:2:2*endMatrix,2*startMatrix:2:2*endMatrix) - diag(4*pi*ones(nnn(i),1));
+          
+          %known BC
+          v(2*startMatrix-1:2:2*endMatrix-1) = PARAM.stressBC{i};
+          v(2*startMatrix:2:2*endMatrix) = PARAM.velBCradial{i};
           
       else
           

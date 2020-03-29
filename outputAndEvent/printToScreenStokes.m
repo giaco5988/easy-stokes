@@ -56,6 +56,8 @@ for i = 1:numel(PARAM.panels)
             BC = 'rigid body motion';
         elseif PARAM.typeBCstokes(numPan)==7
             BC = 'prescribed normal stress due to curvature and gravity';
+        elseif PARAM.typeBCstokes(numPan)==8
+            BC = 'prescribed axial stress and radial velocity';
         else
             error('BC not implemented')
         end

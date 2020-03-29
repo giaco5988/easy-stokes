@@ -30,10 +30,6 @@ for i = 1:loop
     %current time
     t =ttt(i);
     
-    if sum(isnan(x2))>0
-        ciao = 1;
-    end
-    
     %current initial condition
     x0 = x2;
     
