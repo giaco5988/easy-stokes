@@ -1,10 +1,10 @@
 %print to screen information when starting the simulation
 
-function printToScreenVerticalTube(L,x0,alpha,Bond,lambda,dropFrame)
+function printToScreenVerticalTube(L,x0,alpha,Bond,lambda,dropFrame,Ca)
 
 %output hydrodynamics
 disp('HYDRODYNAMIC PARAMETERS')
-disp(['Bond number is Bo=' num2str(Bond) ', Viscosity ratio is lambda=' num2str(lambda)])
+disp(['Bo=' num2str(Bond) ', Ca=' num2str(Bond) ', lambda=' num2str(lambda)])
 
 %ouput geometry
 disp('GEOMETRY')
