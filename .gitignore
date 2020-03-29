@@ -13,6 +13,7 @@
 *.fig
 .*txt
 
+tutorials/tutorial_results/*mat
 startup.m
 .DS_Store
 2D_poisson
