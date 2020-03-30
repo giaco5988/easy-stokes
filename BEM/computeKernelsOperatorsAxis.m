@@ -60,6 +60,12 @@ function [GXX,GXY,GYX,GYY,A11,A12,A21,A22] = computeKernelsOperatorsAxis(Xsing,Y
                 %compute Kernels
                 [GXX{i},GXY{i},GYX{i},GYY{i},A11{i},A12{i},A21{i},A22{i}] = computeKernelStokesAxisLinearSpline(Xsing,Ysing,startMatrix,sum(nnn(1:i)),PARAM.STstokes,ax,ay,bx,by,cx,cy,dx,dy,PARAM.kernelFreeSpace,PARAM.posWall);
                 
+            elseif PARAM.orderVariable(i)=='spectral' && PARAM.orderGeometry(i)=='spectral'
+                
+                error('Not implemented')
+                
+                
+                
             end
         
         end

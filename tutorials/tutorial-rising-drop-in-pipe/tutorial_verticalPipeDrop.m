@@ -14,11 +14,11 @@ PARAM.here = pwd;
 %geometrical and physical parameters
 L = 20;                     % channel lenght
 H = 1;                      % chennel height
-hFilm = 0.2;                % chennel height
-PARAM.visc(4) = 0;          % viscosity ratio
-PARAM.Bond = 1.56;          % bond number
-PARAM.Ca = 0.02;            % Capillary number
-alpha = 2;                  % droplet size
+hFilm = 0.5;                % chennel height
+PARAM.visc(4) = 10;          % viscosity ratio
+PARAM.Bond = 0;          % bond number
+PARAM.Ca = 0.5;            % Capillary number
+alpha = 1.1;                  % droplet size
 PARAM.D(4) = 0;             % droplet size
 xStart0 = 0;                % starting position of bubble
 PARAM.Qsource = [0 0];      % impose bubble growth rate
@@ -29,12 +29,12 @@ PARAM.STstokes = 1;
 PARAM.kernelFreeSpace = 1;  PARAM.posWall = [];
 
 %frame of reference
-PARAM.dropFrame = 1;    % 0 is lab frame, 1 id drop frame
+PARAM.dropFrame = 2;    % 0 is lab frame, 1 id drop frame, 2 in drop and replace center of mass
 
 %time discretization
 Tstart = 0;
-Tend = 200;
-dt = 0.1;
+Tend = 800;
+dt = 0.05;
 ODE = 0;
 tol = 1e-3;
 
@@ -77,7 +77,7 @@ PARAM.blockType = [0 2];                    % 0 is fixed wall, 1 is moving wall,
 PARAM.deflationBlock = [0 0];
 PARAM.deflationConstant = [0 4*pi];
 PARAM.addFlow = 0;
-PARAM.blockVolCorr = [0 0];
+% PARAM.blockVolCorr = [0 0];
 volTol = 1e-3;
 
 if PARAM.visc(4)<0.1
@@ -150,7 +150,7 @@ tic
 
 %time stepping
 if ODE==0
-    [T,Y,V] = RK2mostGeneralBubbleVolCorr(fRising,Tsave,initialXY,dt,dt,outFun,remeshFunction,volCorrFunction);
+    [T,Y,V] = RK2mostGeneralBubbleVolCorr(fRising,Tsave,initialXY,dt,dt,outFun,remeshFunction,volCorrFunction,PARAM.dropFrame==2);
 elseif ODE~=0
     [T,Y] = odeMatlabRemeshVolCorrBubble(fRising,Tsave,initialXY,outFun,remeshFunction,volCorrFunction,options,ODE,PARAM);
 end

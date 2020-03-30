@@ -1,6 +1,6 @@
 %Runge-Kutta order 2
 
-function [T,Y,V] = RK2mostGeneralBubbleVolCorr(f,TTT,initial,DT,initialDT,event,remeshInLoop,volumeCorrection)
+function [T,Y,V] = RK2mostGeneralBubbleVolCorr(f,TTT,initial,DT,initialDT,event,remeshInLoop,volumeCorrection,replaceCM)
 
 %take variables step
 if initialDT==DT
@@ -32,6 +32,9 @@ for i = 1:loop
     
     %current initial condition
     x0 = x2;
+    if replaceCM==1
+        x0(1:2:end-1) = x2(1:2:end-1)-center_mass(x2(1:2:end-1), x2(2:2:end));
+    end
     
     %remesh with splines (deformable interfaces)
     [x0,remeshError] = remeshInLoop(t,x0);

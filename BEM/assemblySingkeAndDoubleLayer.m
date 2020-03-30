@@ -22,7 +22,7 @@ for i = 1:numel(PARAM.n)
       %range
       [startMatrix,endMatrix] = getSingRange(i,nnn);
       
-      if (PARAM.typeBCstokes(i)==0||PARAM.typeBCstokes(i)==1||PARAM.typeBCstokes(i)==2||PARAM.typeBCstokes(i)==3||PARAM.typeBCstokes(i)==4||PARAM.typeBCstokes(i)==6||PARAM.typeBCstokes(i)==7)
+      if (PARAM.typeBCstokes(i)==0||PARAM.typeBCstokes(i)==1||PARAM.typeBCstokes(i)==2||PARAM.typeBCstokes(i)==3||PARAM.typeBCstokes(i)==4||PARAM.typeBCstokes(i)==6||PARAM.typeBCstokes(i)==7||PARAM.typeBCstokes(i)==8)
       
           %single layer
           SL(1:2:end-1,2*startMatrix-1:2:2*endMatrix-1) = GXX{i};
@@ -157,25 +157,15 @@ for i = 1:numel(PARAM.n)
           uBC(2*startMatrix-1:2:2*endMatrix-1) = PARAM.velBC{i};
           uBC(2*startMatrix:2:2*endMatrix) = solution(2*startMatrix:2:2*endMatrix);
           
-%       elseif PARAM.typeBC(i)==7    % prescribe normal stress and tangent velocity
-%           
-%           %known BC
-%           fBC(2*startMatrix-1:2:2*endMatrix-1) = solution(2*startMatrix-1:2:2*endMatrix-1);
-%           fBC(2*startMatrix:2:2*endMatrix) = PARAM.stressBC{i};
-%           
-%           %BC from the result
-%           uBC(2*startMatrix-1:2:2*endMatrix-1) = PARAM.velBC{i};
-%           uBC(2*startMatrix:2:2*endMatrix) = solution(2*startMatrix:2:2*endMatrix);
-%           
-%       elseif PARAM.typeBC(i)==8    % prescribe normal and tangent stress
-%           
-%           %known BC
-%           fBC(2*startMatrix-1:2:2*endMatrix-1) = solution(2*startMatrix-1:2:2*endMatrix-1);
-%           fBC(2*startMatrix:2:2*endMatrix) = PARAM.stressBC{i};
-%           
-%           %BC from the result
-%           uBC(2*startMatrix-1:2:2*endMatrix-1) = PARAM.velBC{i};
-%           uBC(2*startMatrix:2:2*endMatrix) = solution(2*startMatrix:2:2*endMatrix);
+      elseif PARAM.typeBC(i)==8 % prescribe normal stress and tangent velocity
+          
+          %known BC
+          fBC(2*startMatrix-1:2:2*endMatrix-1) = PARAM.stressBC{i};
+          uBC(2*startMatrix:2:2*endMatrix) = PARAM.velBCradial{i};
+          
+          %BC from the result
+          uBC(2*startMatrix-1:2:2*endMatrix-1) = solution(2*startMatrix-1:2:2*endMatrix-1);
+          fBC(2*startMatrix:2:2*endMatrix) = solution(2*startMatrix:2:2*endMatrix);
               
       else
           

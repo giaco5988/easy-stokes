@@ -4,7 +4,7 @@ function printToScreenVerticalTube(L,x0,alpha,Bond,lambda,dropFrame,Ca)
 
 %output hydrodynamics
 disp('HYDRODYNAMIC PARAMETERS')
-disp(['Bo=' num2str(Bond) ', Ca=' num2str(Bond) ', lambda=' num2str(lambda)])
+disp(['Bo=' num2str(Bond) ', Ca=' num2str(Ca) ', lambda=' num2str(lambda)])
 
 %ouput geometry
 disp('GEOMETRY')
@@ -19,6 +19,8 @@ if dropFrame==0
     frame = 'lab frame';
 elseif dropFrame==1
     frame = 'drop frame';
+elseif dropFrame==2
+    frame = 'drop frame but replace drop in center of mass';
 else
     error('Not implemented')
 end

@@ -9,23 +9,22 @@ add_paths_tutorials(REPOSITORY_NAME);
 
 %parameters
 res = 0;
-BoUP = 1.56;
-CaUP = 0.02;
-lambdaUP = 0;
-dtUp = .1;
-TendUP = 100;
+BoUP = 0;
+CaUP = 0.5;
+lambdaUP = 10;
+dtUp = .05;
+TendUP = 310;
 alphaUP = 1.1;
 ODE = 0;
 Lup = 20;
 nDropUP = round(alphaUP*20);   nWallUP = 10;
-% nElemUP = nDropUP+nWallUP*Lup+2*nWallUP;
 nElemUP = 240;
 x0Upload = 0;
 repUP = 0;
 
 color = get(gca,'ColorOrder');
 
-%options
+%optionsy
 plotBubble = 1;    plotIteUp = 1;     savePlot = 0;    plotMesh = 1;
 threeD = 0; theta3D = {[0 pi] [0 2*pi]};    color3D = {10 [1 1 1]};   transp = [1 0.3];
 plotRes = 1;
@@ -35,9 +34,9 @@ plotBubbleArea = 0;
 plotBubbleVolume = 0;
 plotBubbleXcm = 0;
 plotLastCurvature = 0;
-plotVelField = 0;   Tplot = 300;    substitutePoint = 1;    coeffSub = 1; noIn = 0;
+plotVelField = 0;   Tplot = 450;    substitutePoint = 1;    coeffSub = 1; noIn = 0;
 plotVelFieldSlice = 0;  xSlice = 2; nSlice = 100;   Ytop = 1.4;
-cutX = 5;   shift = 5;  cutY = 0.99;   nx = 41;    ny = 40;    postDropFrame = 0;
+cutX = 5;   shift = 0;  cutY = 0.99;   nx = 41;    ny = 40;    postDropFrame = 0;
 plotVelDecay = 0;   nDecay = 5;
 
 %filename
@@ -49,7 +48,6 @@ source = '../tutorial_results/';
 %load file
 load([source filename])
 PARAM.kernelFreeSpace = 1;
-%PARAM.ellipseShape = 1;
 PARAM.ellipseShape = [0 0 0 1];
 PARAM.D = [0 0 0 0];
 
@@ -134,13 +132,13 @@ for i = 1:loopUp
         plotGeometryStokes(x,y,threeD,theta3D,color3D,transp,0,PARAM_now)
         %plot(xBubble(1),yBubble(1),'or')
         xcmPlot = center_mass(xBubble,yBubble);
-        axis([xcmPlot-4 xcmPlot+4 -1 1])
+        plot(xcmPlot, 0, 'or')
         grid on
         hold off
         xlabel('z','Interpreter','latex')
         ylabel('r','Interpreter','latex')
         %axis off
-        title(['Bo=' num2str(BoUP)],'Interpreter','latex')
+        title(['Bo=' num2str(BoUP) ' Ca=' num2str(CaUP)],'Interpreter','latex')
         set(gca,'TickLabelInterpreter','latex')
         
         if plotMesh==1
@@ -181,9 +179,7 @@ for i = 1:loopUp
        [Xgrid,Ygrid] = meshgrid(Xgrid,Ygrid);
        
        %compute
-       cd(BEM)
        [~,yStokes,xVel,yVel,PARAMvel,Vdrop] = computeVelocityRising(T(i),Y{i},tParametricBase,PARAM);
-       cd(here)
        [Xsing,Ysing,ux,uy] = computeVelPressField(Xgrid,Ygrid,xVel,yVel,yStokes,[0 0],0,PARAMvel,substitutePoint,coeffSub,noIn);
        frame = 'lab';
        if postDropFrame==1
@@ -221,9 +217,7 @@ for i = 1:loopUp
        Xgrid = xSlice*ones(1,numel(Ygrid));
        
        %compute
-       cd(BEM)
-       [~,yStokes,xVel,yVel,PARAMvel] = computeVelocityDeformableBubbleODE(T(i),Y{i},tParametricBase,PARAM);
-       cd(here)
+       [~,yStokes,xVel,yVel,PARAMvel] = computeVelocityRising(T(i),Y{i},tParametricBase,PARAM);
        
        %on the right of the motor
        [~,~,uxSlice,uySlice] = computeVelPressField(Xgrid,Ygrid,xVel,yVel,yStokes,[yStokes(end) 0],0,PARAMvel,0,coeffSub);
@@ -377,32 +371,11 @@ end
 if plotFilm==1
     
     figure(7)
-    %hold on
     plot(T(1:i),hFilmPost(1:i))
     hold on
-    %plot(T(1:i),minDL(1:i))
     grid on
     xyLabelTex('t','h')
     title('film thickness')
-    %legend('Film thickness','Minimum element size','Location','Best')
-    drawnow
-    
-    figure(10)
-    %hold on
-    plot(xcm(1:i),hFilmPost(1:i))
-    grid on
-    xyLabelTex('z_{cm}','h')
-    title('film thickness')
-    %legend('Film thickness','Minimum element size','Location','Best')
-    drawnow
-       
-    figure(10)
-    %hold on
-    plot(maxBubble(1:i),maxBubble(1:i)-minBubble(1:i),'k')
-    grid on
-    xyLabelTex('z_{front}','\Delta l')
-    title('Bubble lenght')
-    %legend('Film thickness','Minimum element size','Location','Best')
     drawnow
     
 end
@@ -411,9 +384,7 @@ end
 if plotRes==1
     
     figure(8)
-    %hold on
     semilogy(T(1:i),manyRes(1:i))
-    %plot(T(1:i),manyRes(1:i))
     grid on
     xyLabelTex('t','R')
     title('Residuals')

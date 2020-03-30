@@ -16,5 +16,8 @@ function add_paths_tutorials(CURRENT_LOCATION)
     addpath([CURRENT_LOCATION 'timeStepping/'])
     addpath([CURRENT_LOCATION 'outputAndEvent/'])
     addpath([CURRENT_LOCATION 'edgeTracking/'])
+    addpath([CURRENT_LOCATION 'Postprocessing/phoretic/'])
+    addpath([CURRENT_LOCATION 'Postprocessing/computeFieldBEM'])
+    addpath([CURRENT_LOCATION 'plotFun'])
     
 end
