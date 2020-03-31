@@ -34,7 +34,7 @@ The script is densely commented and describes the main functionalities of the so
 
 Run the script `post_processing_drop_pipe.m` to perform post-processing after having run `tutorial_drop_in_pipe.m` and set the `REPOSITORY_NAME` variable to `path/to/easy-drop`.
 
-The result of `tutorial_drop_in_pipe.m`, keeping the default values is shown below. It gives the converged droplet shape as in figure-2 of Lac and Sherwood. Low values of the residuals, calculated as velocity normal to th einterface in the dropl frame, indicates a converged solution.
+The result of `tutorial_drop_in_pipe.m`, keeping the default values is shown below. It gives the converged droplet shape as in figure-2 of Lac and Sherwood. Low values of the residuals, calculated as velocity normal to the interface in the dropl frame, indicates a converged solution.
 
 ![](docs/domain_drop_in_pipe.png)
 ![](docs/residuals_drop_in_pipe.png)
