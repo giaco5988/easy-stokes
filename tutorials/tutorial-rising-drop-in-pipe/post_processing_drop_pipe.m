@@ -85,7 +85,7 @@ for i = 1:loopUp
    
    %residuals
    if plotRes==1 || plotDropVel==1
-    [Vhere,~,~,~,~,dropVel(i)] = computeVelocityRising(T(i),Yhere,tParametricPost,PARAM_now);
+    [Vhere,~,~,~,~,dropVel(i)] = computeVelocityDropInPipe(T(i),Yhere,tParametricPost,PARAM_now);
     [nxBubble,nyBubble] = computeNormalVector(xBubble',yBubble',PARAM.orderVariableStokes(4),PARAM.orderGeometryStokes(4),PARAM.SPlinesType(4));
 %     dropVel(i) = DropVelocityAxis(xBubble',yBubble',Vhere(1:2:end-1).*nxBubble'+Vhere(2:2:end).*nyBubble');
     frontVel(i) = Vhere(1);
@@ -158,7 +158,7 @@ for i = 1:loopUp
        [Xgrid,Ygrid] = meshgrid(Xgrid,Ygrid);
        
        %compute
-       [~,yStokes,xVel,yVel,PARAMvel,Vdrop] = computeVelocityRising(T(i),Y{i},tParametricBase,PARAM);
+       [~,yStokes,xVel,yVel,PARAMvel,Vdrop] = computeVelocityDropInPipe(T(i),Y{i},tParametricBase,PARAM);
        [Xsing,Ysing,ux,uy] = computeVelPressField(Xgrid,Ygrid,xVel,yVel,yStokes,[0 0],0,PARAMvel,substitutePoint,coeffSub,noIn);
        frame = 'lab';
        if postDropFrame==1

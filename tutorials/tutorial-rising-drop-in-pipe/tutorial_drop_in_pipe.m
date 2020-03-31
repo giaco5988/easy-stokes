@@ -135,7 +135,7 @@ printToScreenVerticalTube(L,PARAM.x0_Circle(4),alpha,PARAM.Bond,PARAM.visc(4),PA
 PARAM.filename = chooseFilenameVerticalTube(PARAM,sum(PARAM.n),L,Tend,dt,alpha,PARAM.x0_Circle(4),PARAM.Bond,0,PARAM.visc(4),sum(PARAM.repulsiveForces),PARAM.Ca);
 
 %% Handle functions
-fRising = @(t,var) computeVelocityRising(t,var,tParametricBase,PARAM);  % MOST IMPORTANT: Compute the interface velocity as a function it it position dx/dt=F(x)
+fRising = @(t,var) computeVelocityDropInPipe(t,var,tParametricBase,PARAM);  % MOST IMPORTANT: Compute the interface velocity as a function it it position dx/dt=F(x)
 remeshFunction = @(t,var) remeshPanelsOneBubble(t,var,PARAM);           % Remesh handle function
 volCorrFunction = @(t,var) volCorrBubble(t,var,4/3*pi*alpha^3);         % Volume correction handle function
     
