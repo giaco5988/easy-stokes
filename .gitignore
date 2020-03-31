@@ -1,4 +1,3 @@
-*.png
 *.swp
 *.pdf
 *.aux
@@ -8,7 +7,6 @@
 *.fls
 *.out
 *.mat
-*.eps
 *.dat
 *.fig
 .*txt
