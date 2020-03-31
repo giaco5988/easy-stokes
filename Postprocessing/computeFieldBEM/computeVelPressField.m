@@ -46,7 +46,7 @@ if noIn==1
     end
     InOut = (InOut>0);
 else
-    InOut = 0;
+    InOut = zeros(numel(Xsing),1);
 end
 
 %add repulsive force for droplet (or bubble)
@@ -135,9 +135,9 @@ if substitutePoint==1
 end
 
 %InOut = 0;
-% ux = ux.*(1-InOut');
-% uy = uy.*(1-InOut');
-% p = p.*(1-InOut');
+ux = ux.*(1-InOut);
+uy = uy.*(1-InOut);
+p = p.*(1-InOut);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
