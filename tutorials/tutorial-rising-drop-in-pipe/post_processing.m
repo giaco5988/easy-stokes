@@ -3,44 +3,39 @@
 clear variables
 close all
 
-% add libraries paths
-REPOSITORY_NAME = '~/Documents/MATLAB/';
-add_paths_tutorials(REPOSITORY_NAME);
-
-%parameters
-res = 0;
-BoUP = 0;
-CaUP = 0.5;
-lambdaUP = 10;
-dtUp = .05;
-TendUP = 310;
-alphaUP = 1.1;
-ODE = 0;
-Lup = 20;
-nDropUP = round(alphaUP*20);   nWallUP = 10;
-nElemUP = 240;
-x0Upload = 0;
-repUP = 0;
-
 color = get(gca,'ColorOrder');
 
-%optionsy
-plotBubble = 1;    plotIteUp = 1;     savePlot = 0;    plotMesh = 1;
-threeD = 0; theta3D = {[0 pi] [0 2*pi]};    color3D = {10 [1 1 1]};   transp = [1 0.3];
-plotRes = 1;
-plotDropVel = 0;
-plotFilm = 1;
-plotBubbleArea = 0;
-plotBubbleVolume = 0;
-plotBubbleXcm = 0;
-plotLastCurvature = 0;
-plotVelField = 0;   Tplot = 450;    substitutePoint = 1;    coeffSub = 1; noIn = 0;
-plotVelFieldSlice = 0;  xSlice = 2; nSlice = 100;   Ytop = 1.4;
-cutX = 5;   shift = 0;  cutY = 0.99;   nx = 41;    ny = 40;    postDropFrame = 0;
-plotVelDecay = 0;   nDecay = 5;
+%% Add libraries paths
+REPOSITORY_NAME = '~/Documents/MATLAB/';    % path to the repository
+add_paths_tutorials(REPOSITORY_NAME);
+
+%% Uplaod parameters
+BoUP = 0;           % Bond number
+CaUP = 0.05;        % Capillary number
+lambdaUP = 10;      % viscosity ratio
+dtUp = .1;          % time step
+TendUP = 500;       % total simulated time
+alphaUP = 1.1;      % drop size
+Lup = 10;           % length of the capillary
+nElemUP = 160;      % total number of elements (at start)
+x0Upload = 0;       % initial drop position
+repUP = 0;          % repulsive forces option
+
+%% Plotting options
+plotBubble = 1;    plotIteUp = 1;     savePlot = 0;    plotMesh = 0;                    % if 1, do plot and choose options
+threeD = 0; theta3D = {[0 pi] [0 2*pi]};    color3D = {10 [1 1 1]};   transp = [1 0.3]; % make plot 3D
+plotRes = 1;                                                                            % plot residuals
+plotDropVel = 0;                                                                        % plot drop velocity
+plotFilm = 0;                                                                           % plot film thickness
+plotBubbleArea = 0;                                                                     % plot bubble area
+plotBubbleVolume = 0;                                                                   % plot bubble volume
+plotBubbleXcm = 0;                                                                      % plot center of mass position
+plotLastCurvature = 0;                                                                  % plot curcature
+plotVelField = 0;   Tplot = 450;    substitutePoint = 1;    coeffSub = 0.5; noIn = 0;   % plot velocity field
+cutX = 5;   shift = 0;  cutY = 0.99;   nx = 100;    ny = 10;    postDropFrame = 1;
 
 %filename
-filename = ['verticalTube_ODE=' num2str(ODE) '_rep=' num2str(repUP) '_x0=' num2str(x0Upload) '_alpha=' num2str(alphaUP) '_Bond=' num2str(BoUP) '_Ca=' num2str(CaUP) '_lambda=' num2str(lambdaUP) '_L=' num2str(Lup) '_nStart=' num2str(nElemUP) '_Tend=' num2str(TendUP) '_dt=' num2str(dtUp) '.mat'];
+filename = ['verticalTube_ODE=' num2str(0) '_rep=' num2str(repUP) '_x0=' num2str(x0Upload) '_alpha=' num2str(alphaUP) '_Bond=' num2str(BoUP) '_Ca=' num2str(CaUP) '_lambda=' num2str(lambdaUP) '_L=' num2str(Lup) '_nStart=' num2str(nElemUP) '_Tend=' num2str(TendUP) '_dt=' num2str(dtUp) '.mat'];
 
 %source
 source = '../tutorial_results/';
@@ -69,20 +64,18 @@ maxBubble = zeros(numel(T),1);
 minBubble = zeros(numel(T),1);
 hFilmPost = zeros(numel(T),1);
 minDL = zeros(numel(T),1);
-tParametricPost = {linspace(0,1,nWallUP) linspace(0,1,nWallUP*Lup) linspace(0,1,nWallUP) nan};
+tParametricPost = {linspace(0,1,PARAM.n(1)+1) linspace(0,1,PARAM.n(2)+1) linspace(0,1,PARAM.n(3)+1) nan};
 for i = 1:loopUp
     
    display([num2str(i) ' of ' num2str(loopUp)])
     
    %current shape and motor position
    Yhere = Y{i};
-   if ODE==0
-    Vhere = V{i};
-   end
+   Vhere = V{i};
    xBubble = Yhere(1:2:end-1);
    yBubble = Yhere(2:2:end);
    
-   %current location   TEMPORARY!!!
+   %current location
    PARAM_now = PARAM;
    
    %compute curent shape
@@ -92,14 +85,13 @@ for i = 1:loopUp
    
    %residuals
    if plotRes==1 || plotDropVel==1
-    if ODE~=0
-        cd(BEM)
-        Vhere = computeVelocityRising(T(i),Yhere,tParametricPost,PARAM_now);
-        cd(here)
-    end
+    [Vhere,~,~,~,~,dropVel(i)] = computeVelocityRising(T(i),Yhere,tParametricPost,PARAM_now);
     [nxBubble,nyBubble] = computeNormalVector(xBubble',yBubble',PARAM.orderVariableStokes(4),PARAM.orderGeometryStokes(4),PARAM.SPlinesType(4));
-    dropVel(i) = DropVelocityAxis(xBubble',yBubble',Vhere(1:2:end-1).*nxBubble'+Vhere(2:2:end).*nyBubble');
+%     dropVel(i) = DropVelocityAxis(xBubble',yBubble',Vhere(1:2:end-1).*nxBubble'+Vhere(2:2:end).*nyBubble');
     frontVel(i) = Vhere(1);
+    if PARAM.dropFrame~=0
+        frontVel(i) = frontVel(i) + dropVel(i);
+    end
     res = NormalVelocityDropFrame(Yhere(1:2:end-1)',Yhere(2:2:end)',Vhere(1:2:end-1),Vhere(2:2:end));
     manyRes(i) = norm(res,Inf);
    end
@@ -150,19 +142,6 @@ for i = 1:loopUp
         end
         drawnow
         
-        %subplot(2,1,2)
-%         figure(1)
-%         plot(T(1:i),Ucone(1:i))
-%         hold on
-%         plot(T(i),Ucone(i),'.','MarkerSize',40,'Color',color(1,:))
-%         grid on
-%         xlabel('t')
-%         ylabel('U_{cone}')
-%         hold off
-%         axis([0 500 -2.5*1e-3 -0.5*1e-3])
-%         %title('Cone Velocity')
-%         drawnow
-        
         if savePlot==1
             grid off
             print('-dpng','-loose','-r100',[saveDest namePlot sprintf('%03d',round((i-1)/plotIteUp)) '.png'])
@@ -209,83 +188,6 @@ for i = 1:loopUp
        
    end
    
-   %plot velocity field
-   if plotVelFieldSlice==1 && T(i)==Tplot
-       
-       %create grid
-       Ygrid = linspace(0,Ytop,nSlice);
-       Xgrid = xSlice*ones(1,numel(Ygrid));
-       
-       %compute
-       [~,yStokes,xVel,yVel,PARAMvel] = computeVelocityRising(T(i),Y{i},tParametricBase,PARAM);
-       
-       %on the right of the motor
-       [~,~,uxSlice,uySlice] = computeVelPressField(Xgrid,Ygrid,xVel,yVel,yStokes,[yStokes(end) 0],0,PARAMvel,0,coeffSub);
-       
-       figure
-       subplot(2,1,1)
-       plotGeometryStokes(x,y,threeD,theta3D,color3D,transp,PARAM_now)
-       axis([-5 15 -2 2])
-       grid on
-       title(['t=' num2str(T(i))])
-       drawnow
-       plot(Xgrid,Ygrid,'r')
-       
-       subplot(2,1,2)
-       plot(Ygrid,uxSlice)
-       hold on
-       grid on
-       plot(Ygrid,uySlice)
-       xlabel('y')
-       ylabel('u')
-       
-       %compute flow rate
-       Qflow = 2*pi*trapz(Ygrid,Ygrid.*uxSlice);
-       display(Qflow)
-       
-   end
-   
-   %plot velocity field
-   if plotVelDecay==1 && T(i)==Tplot
-       
-       %create grid
-       Xgrid = linspace(-cutX,cutX,nx)+shift;
-       Ygrid = linspace(0,cutY,ny);
-       [Xgrid,Ygrid] = meshgrid(Xgrid,Ygrid);
-       
-       %compute
-       cd(BEM)
-       [~,yStokes,xVel,yVel,PARAMvel] = computeVelocityDeformableBubbleODE(T(i),Y{i},tParametricBase,PARAM);
-       cd(here)
-       
-       %on the right of the motor
-       Xright = logspace(1,nDecay,100);
-       Yright = zeros(1,numel(Xright));
-       [~,~,uxRight,uyRight] = computeVelPressField(Xright,Yright,xVel,yVel,yStokes,[yStokes(end) 0],0,PARAMvel,0,coeffSub);
-       
-       %on the left of the motor
-       Xleft = -logspace(1,nDecay,100);
-       Yleft = zeros(1,numel(Xleft));
-       [~,~,uxLeft,uyLeft] = computeVelPressField(Xleft,Yleft,xVel,yVel,yStokes,[yStokes(end) 0],0,PARAMvel,0,coeffSub);
-       
-       %upward
-       Yupward = logspace(1,nDecay,100);
-       Xupward = zeros(1,numel(Yupward));
-       [~,~,uxUpward,uyUpward] = computeVelPressField(Xupward,Yupward,xVel,yVel,yStokes,[yStokes(end) 0],0,PARAMvel,0,coeffSub);
-       
-       figure
-       loglog(Xright,sqrt(uxRight.^2+uyRight.^2),'-x')
-       hold on
-       loglog(Yupward,sqrt(uxUpward.^2+uyUpward.^2),'-x')
-       loglog(-Xleft,sqrt(uxLeft.^2+uyLeft.^2),'-x')
-       grid on
-       xlabel('\rho')
-       ylabel('|U|')
-       title('Velocity decay')
-       drawnow
-       
-   end
-    
 end
 
 %derivative
@@ -386,7 +288,7 @@ if plotRes==1
     figure(8)
     semilogy(T(1:i),manyRes(1:i))
     grid on
-    xyLabelTex('t','R')
+    xyLabelTex('t','|\bf u \cdot n|')
     title('Residuals')
     drawnow
        
