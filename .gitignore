@@ -17,7 +17,6 @@ tutorials/tutorial_results/*mat
 startup.m
 .DS_Store
 2D_poisson
-Postprocessing
 Slepian
 analytical
 archive
