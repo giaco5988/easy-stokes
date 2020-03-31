@@ -3,7 +3,7 @@
 clear variables
 close all
 
-color = get(gca,'ColorOrder')
+color = get(gca,'ColorOrder');
 
 %% Add libraries paths
 REPOSITORY_NAME = '~/Documents/MATLAB/';    % path to the repository
