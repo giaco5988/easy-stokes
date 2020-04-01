@@ -18,7 +18,7 @@ This tutorial simulate the motion of a deformable droplet moving in a pipe due t
 
 ## Problem definition
 
-![](docs/domain_drop_in_pipe.eps)
+![](docs/domain_drop_in_pipe.png)
 
 Referring to the picture above, the dimensioanl parameters of the problem are:
 
@@ -51,4 +51,4 @@ Run the script `post_processing_drop_pipe.m` to perform post-processing after ha
 
 The result of `tutorial_drop_in_pipe.m`, keeping the default values is shown below. It gives the converged droplet shape as in figure-2 of Lac and Sherwood. Low values of the residuals, calculated as velocity normal to the interface in the dropl frame, indicates a converged solution.
 
-![](docs/residuals_drop_in_pipe.eps)
+![](docs/residuals_drop_in_pipe.png)
