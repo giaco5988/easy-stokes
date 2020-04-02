@@ -66,4 +66,5 @@ git clone git@github.com:giaco5988/easy-stokes.git
 
 Go to `easy-drop/tutorials` for an hands-on introduction to the code.
 
-* Simulation of a droplet in a capillary tube (possible to add gravity) `easy-drop/tutorials/tutorial-drop-in-pipe`.
+* DNS simulation of a droplet in an unbounded domain using Spectral BIM `easy-drop/tutorials/tutorial-drop-spectral-dns`.
+* DNS simulation of a droplet in a capillary tube (possible to add gravity) `easy-drop/tutorials/tutorial-drop-in-pipe`.
