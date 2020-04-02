@@ -17,7 +17,7 @@ tic
 
 %% PHYSICAL PARAMETERS
 PARAM.Ca = 0.1;                                     % capillary number
-PARAM.visc = 1;     PARAM.Qdeflation = 0;           % viscosity ratio and deflation
+PARAM.visc = 5;     PARAM.Qdeflation = 0;           % viscosity ratio and deflation
 V0 = 4/3*pi;                                        % drop volume
 PARAM.placeShapeXCM = 0;                            % when doing edge tracking, replace always droplet in x0=0 at t0
 PARAM.CaNL = 0;                                     % non linear extensional flow
@@ -27,7 +27,7 @@ PARAM.BC = 1;	% BC: 1 is linear extensional flow, 2 is rising droplet, 3 is nonl
 
 %% INITIAL CONDITION
 PARAM.uploadShape = 0;          % 0 the initial shape is analytical
-PARAM.D = 0.2;                  % deformation parameter of the initial condition
+PARAM.D = 0;                  % deformation parameter of the initial condition
 PARAM.shapeEllipse = 1;         % 0 initial shape is sphere plus P2 Legendre, 1 initial shape is an ellipse, 2 is pertubed with 2 legendre polynomials P2 P4, 3 is asymmetric shape by P3 Legendre, 4 is P2, P3
 PARAM.f2 = 0.8;                 % if I use first two leegndre polynomials
 
@@ -49,14 +49,14 @@ PARAM.remeshStart = 0;                              % remesh when drawning initi
 PARAM.checkRemeshFail = 1;                          % check if newton method for remeshing fails
     
 %% SPACE DISCRETIZATION
-PARAM.legendre = 1;                                         % choose 0 Chebyshev, 1 Legendre, 2 is Legendre-Lobatto
-PARAM.dealiasing = 50;  ratioGrid = 2;                     % dealiasing
-PARAM.tresholdCoeffs = 1e-2;     PARAM.Rescale = 1;         % option for accuracy
+PARAM.legendre = 1;                                     % choose 0 Chebyshev, 1 Legendre, 2 is Legendre-Lobatto
+PARAM.dealiasing = 25;  ratioGrid = 2;                  % dealiasing, decide how many modes to use and create ratioGrid*dealiasing grid point
+PARAM.tresholdCoeffs = 1e-2;     PARAM.Rescale = 1;     % option for accuracy, id the last coeffient of the highest order mode is too large, stop the simulation
 
 %% TIME DISCRETIZATION
 PARAM.ODE = 2;          % 1 is ODE45, 2 is RK2, 3 is ODE23s, 4 is ODE23, 5 is ODE113, 6 is ODE23t, 7 is ODE15s, 8 is OD23tb
 Tstart = 0;             % beginning of simulation
-Tend = 100;              % end of simulation
+Tend = 500;             % end of simulation
 maxDT = 1e-2;           % set max time step
 initialDT = maxDT;      % set initial time step
 
@@ -67,17 +67,16 @@ SaveHowMany = 100;                                  % save how many times
 Tsave = linspace(Tstart,Tend,SaveHowMany+1);        % output at those time
 
 %% CONVERGENCE
-PARAM.checkRes = 1;                 % check residuals or not
-PARAM.converge = 1e-6;              % when resilduals are smaller, convergence
-PARAM.convergeShape = -0.01;        % convergence based on shape
-PARAM.convergeShapeEdge = 0.02;     % convergence based on shape
+PARAM.checkRes = 1;              % check residuals or not (normal velocity to the interface)
+PARAM.converge = 0;              % when resilduals are smaller, convergence
+PARAM.convergeShape = -0.01;     % convergence based on shape (check convergence based on drolet shape, insert negative number if you want to deactivate)
 
 %% number of grid points
-PARAM.n = round(ratioGrid*PARAM.dealiasing)+1;
-PARAM.V0 = V0;
-PARAM.Tend = Tend;
+PARAM.n = round(ratioGrid*PARAM.dealiasing)+1;  % number of grid points
+PARAM.V0 = V0;                                  % droplet volume
+PARAM.Tend = Tend;                              % end time
 
-%% Filename
+%% Set filename
 PARAM.algorithm = 1;    PARAM.A0perturb = 0;
 PARAM.filename = chooseFilename(PARAM,maxDT,Tend,PARAM.A0perturb);
 PARAM.filenameIte = PARAM.filename;
