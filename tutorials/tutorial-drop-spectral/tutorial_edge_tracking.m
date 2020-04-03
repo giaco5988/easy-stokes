@@ -39,7 +39,7 @@ PARAM.volume = 0;   PARAM.volTol = 1e-14;           % impose volume conservation
 PARAM.ODE = 2;          % 1 is ODE45, 2 is RK2, 3 is ODE23s, 4 is ODE23, 5 is ODE113, 6 is ODE23t, 7 is ODE15s, 8 is OD23tb
 Tstart = 0;             % beginning of simulation
 Tend = 500;             % end of simulation
-maxDT = 1e-2;           % set max time step
+maxDT = 1e-2;           % maximum time step if adaptive, otherwise simply time step
 initialDT = maxDT;      % set initial time step
 PARAM.Tend = Tend;      % end time
 
@@ -69,7 +69,7 @@ SaveHowMany = 100;                                  % save how many times
 Tsave = linspace(Tstart,Tend,SaveHowMany+1);        % output at those time
 
 %% EDGE TRACKING PARAMETERS
-PARAM.edgeLoop = 10;                            % loop of edge tracking
+PARAM.edgeLoop = 20;                            % loop of edge tracking
 PARAM.edgeStartingLoop = 1;                     % starting loop of edge tracking
 PARAM.bisection = 2;                            % 1 average points resizing for volume conservation, 2 as before but resize also to bisect the area value
 PARAM.deltaEdge = 1e-2;                         % next loop starts when a norm is smaller that this
@@ -82,18 +82,19 @@ PARAM.deltaModify = 1;
 
 %% CONVERGENCE
 PARAM.checkRes = 1;              % check residuals or not (normal velocity to the interface)
-PARAM.converge = 1e-5;              % when resilduals are smaller, convergence
-PARAM.convergeShape = -0.01;     % convergence based on shape (check convergence based on drolet shape, insert negative number if you want to deactivate)
+PARAM.converge = 0;              % when resilduals are smaller, stop simulation
+PARAM.convergeShape = 0.01;      % convergence based on shape (check convergence based on drolet shape, insert negative number if you want to deactivate)
+PARAM.convergeShapeEdge = 0.02;  % to understand which trajectory is stable and which not
 
 %% CHOOSE FILENAME
 PARAM.algorithm = 2;    % edge tracking
-PARAM.filename = chooseFilename(PARAM,0,0,0);
+PARAM.filename = chooseFilename(PARAM,maxDT,Tend,0);
 PARAM.filenameIte = PARAM.filename;
 PARAM.res = results;
 PARAM.this_folder = here;
 PARAM.V0 = V0;
 
-%compute integration weight and differentiation matrices
+%% INTEGRATION WEIGTHS AND DIFFERENTIATION MATRICES
 if PARAM.legendre==1
     [PARAM.t,PARAM.D1,PARAM.D2,PARAM.WG,PARAM.manyWG,PARAM.PPP] = LegendreIntDiff(0,1,PARAM.n+1);
     [PARAM.tcheb,PARAM.D1cheb,PARAM.D2cheb,PARAM.WGcheb] = ChebyshevIntDiff(0,1,PARAM.n+1);
