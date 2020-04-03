@@ -66,5 +66,5 @@ git clone git@github.com:giaco5988/easy-stokes.git
 
 Go to `easy-drop/tutorials` for an hands-on introduction to the code.
 
-* Spectral BIM implementation simulating one droplet in an unbounded domain `easy-drop/tutorials/tutorial-drop-spectral`. Possible to run DNS, Newton method, Stability analysis, Continuation method and Edge tracking.
-* DNS simulation of a droplet in a capillary tube (possible to add gravity) `easy-drop/tutorials/tutorial-drop-in-pipe`.
+* Go to `easy-drop/tutorials/tutorial-drop-spectral` to perform DNS, Newton method, Stability analysis, Continuation method and Edge tracking of one droplet deforming in an ambient fluid, using the Spectral BIM implementation.
+* Go to `easy-drop/tutorials/tutorial-drop-in-pipe` to perform a DNS simulation of a droplet in a capillary tube (possible to add gravity).
