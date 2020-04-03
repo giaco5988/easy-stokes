@@ -25,7 +25,7 @@ edgeDelta = 1e-2;       % bisect trajectory when they are this far
 
 %% PLOTTING OPTION
 colIN = '--'; colOUT = '-';     % line for stable/unstable trajectories
-plotShape = 0;   mesh = 0;      % if 1, plot shape
+plotShape = 1;   mesh = 0;      % if 1, plot shape
 plotNorm = 1;                   % if 1, plot droplet elongation
 plotRes = 1;                    % if 1, plot residuals
 plotVol = 0;                    % if 1, plot volume error
@@ -46,6 +46,7 @@ Tbreak = Inf;
 step = 1;
 color = get(gca,'ColorOrder');
 close gcf
+resEdge = 1;
 for l = 1:edgeLoop
     
     T = Tedge{l};
@@ -174,10 +175,6 @@ for l = 1:edgeLoop
                    [~,res(i)] = dropLegendreCurvilinearModes(t,xyMode,PARAM);
                elseif PARAM.legendre==0
                    [~,res(i)] = dropExtensChebfunCurvilinearModes(t,xyMode,PARAM);
-               end
-               if res(i) < 2e-5
-                   xEdge = x;
-                   yEdge = y;
                end
        end
 
@@ -316,15 +313,6 @@ for l = 1:edgeLoop
     end
 
 end
-
-figure
-plot([x; flip(x)], [y; -flip(y)], '--k')
-hold on
-plot(xEdge, yEdge, 'k')
-plot(xEdge, -yEdge, 'k')
-legend('Base state', 'Edge state')
-axis equal
-xyLabelTex('z', 'r')
 
 %% print simulation time
 disp(['Simulation time T=' num2str(simulationTime/60) ' minutes'])
