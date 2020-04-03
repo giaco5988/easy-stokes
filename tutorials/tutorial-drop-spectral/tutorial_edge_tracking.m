@@ -105,7 +105,7 @@ elseif PARAM.legendre==2
 end
 
 %% EDGE TRACKING
-[Tedge,Yedge] = edgeTracking(Tsave,maxDT,initialDT,PARAM,V0);
+[Tedge,Yedge] = tutorial_edgeTracking(Tsave,maxDT,initialDT,PARAM,V0);
 
 simulationTime = toc;
 

@@ -172,9 +172,9 @@ for l = 1:edgeLoop
        if plotRes==1
 
                if PARAM.legendre==1
-                   [~,res(i)] = dropLegendreCurvilinearModes(t,xyMode,PARAM);
+                   [~,res(i)] = tutorial_dropLegendreCurvilinearModes(t,xyMode,PARAM);
                elseif PARAM.legendre==0
-                   [~,res(i)] = dropExtensChebfunCurvilinearModes(t,xyMode,PARAM);
+                   [~,res(i)] = tutorial_dropExtensChebfunCurvilinearModes(t,xyMode,PARAM);
                end
        end
 

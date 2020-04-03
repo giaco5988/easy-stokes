@@ -13,8 +13,6 @@ add_paths_tutorials_drop_spectral(REPOSITORY_NAME);
 results = '../tutorial_results';
 here = pwd;
 
-tic
-
 %% PHYSICAL PARAMETERS
 PARAM.Ca = 0.1;                                       % capillary number
 PARAM.visc = 5;     PARAM.Qdeflation = 0;           % viscosity ratio and deflation
@@ -80,16 +78,7 @@ elseif PARAM.legendre==2
 end
   
 %% RUN NEWTON METHOD 
-newtonMethodSpectralXYmodesFunction(PARAM);
-
-%take simulation time
-simulationTime = toc;
-
-%% SAVE AND CLOSE
-cd(results)
-disp('Save data')
-save(PARAM.filename)
-cd(here)
+tutorial_newtonMethodSpectralXYmodesFunction(PARAM);
 
 %the end
 disp('The End')

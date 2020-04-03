@@ -4,12 +4,12 @@
 clear variables
 close all
 
-%% Add libraries paths
+%% ADD LIBRARIES
 REPOSITORY_NAME = '~/Documents/MATLAB/';    % path to the repository
 addpath('../utils_one_drop_spectral')
 add_paths_tutorials_drop_spectral(REPOSITORY_NAME);
 
-%% Path to results
+%% PATH TO RESULTS
 results = '../tutorial_results';
 here = pwd;
 
@@ -95,7 +95,7 @@ elseif PARAM.legendre==2
 end
   
 %% Time stepping
-[T,Y] = runTimeStepping(Tsave,maxDT,initialDT,PARAM,V0);
+[T,Y] = tutorial_runTimeStepping(Tsave,maxDT,initialDT,PARAM,V0);
 
 simulationTime = toc;
 

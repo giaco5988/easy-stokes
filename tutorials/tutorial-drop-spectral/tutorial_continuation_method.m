@@ -90,7 +90,7 @@ elseif PARAM.legendre==2
 end
   
 %% RUN CONTINUATION METHOD
-newtonMethodSpectralXYmodesContFunction(PARAM);
+tutorial_newtonMethodSpectralXYmodesContFunction(PARAM);
 
 %take simulation time
 simulationTime = toc;

@@ -173,9 +173,9 @@ for i = 1:ite
    if plotRes==1
            
            if PARAM.legendre==1||PARAM.legendre==2
-               [~,res(i)] = dropLegendreCurvilinearModes(0,xyMode,PARAM);
+               [~,res(i)] = tutorial_dropLegendreCurvilinearModes(0,xyMode,PARAM);
            elseif PARAM.legendre==0
-               [~,res(i)] = dropExtensChebfunCurvilinearModes(0,xyMode,PARAM);
+               [~,res(i)] = tutorial_dropExtensChebfunCurvilinearModes(0,xyMode,PARAM);
            end
        
    end
