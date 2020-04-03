@@ -7,6 +7,7 @@ function newtonMethodSpectralXYmodesContFunction(PARAM)
 here = pwd;
 
 %print to screen
+PARAM.ODE = 0;
 printToScreen(PARAM);
 
 %local variables
@@ -93,7 +94,7 @@ if PARAM.dropFrame==1
 end
 
 %continuation
-display('Continuation loop')
+disp('Continuation loop')
 countCont = 1;
 beforeSing = 0;
 while (PARAM.Ca<CaBreakUp && PARAM.Ca>CaBreakDown) || countCont==1
@@ -217,23 +218,9 @@ while (PARAM.Ca<CaBreakUp && PARAM.Ca>CaBreakDown) || countCont==1
         R(1:end-1) = u;
         %continuation
         R(end) = dir'*(sol-solPrev)-delta;
-        
-        if PARAM.computeOnlyOneJacobian==1
-            disp('Compute only on Jacobian')
-        end
     
         %Jacobians
-        if PARAM.cpu==1
-            %Jacobian
-            if (count==0 && sum(1:PARAM.computeJacobianHowOften:1e4==countCont) && PARAM.computeOnlyOneJacobian==1) || count>PARAM.computeJacobianNow
-                J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
-            elseif PARAM.computeOnlyOneJacobian==0
-                J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
-            end
-            %J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
-        elseif PARAM.cpu>1
-            J = JacobianHandleParallel(fNonlinear,perturb,PARAM.dh);
-        end
+        J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
         Jca = JacobianHandle(fNonlinearCa,PARAM.Ca,PARAM.dh);
         
         %build Jacobian
@@ -241,9 +228,6 @@ while (PARAM.Ca<CaBreakUp && PARAM.Ca>CaBreakDown) || countCont==1
 
         %compute elongation
         D = max(x);
-        %AAA = x(1)-x(end);
-        %BBB = 2*y(round(numel(y)/2));
-        %D = (AAA-BBB)/(AAA+BBB);
 
         %new guess
         step = JJJ\R;

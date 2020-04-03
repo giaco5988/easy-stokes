@@ -7,13 +7,11 @@ function newtonMethodSpectralXYmodesFunction(PARAM)
 here = pwd;
 
 %print to screen
+PARAM.ODE = 0;
 printToScreen(PARAM);
 
 %initial condition
 [initial,x,y] = initialConditionDrop(PARAM);
-% if PARAM.uploadShape==1
-%     PARAM.Ca = newCa;
-% end
 
 %coordinates for plotting
 aIN = x;  bIN = y;
@@ -49,25 +47,6 @@ end
 
 % Newton iterations
 disp('Newton iteration starts')
-if PARAM.call_fsolve == 1
-    
-    if PARAM.parallel_jacobian_on==1
-        options = optimoptions('fsolve','TolFun',PARAM.ResBreak,'TolX',PARAM.ResBreak,'Display','iter','UseParallel',1);
-        if PARAM.plotRes==1
-            options = optimoptions('fsolve','TolFun',PARAM.ResBreak,'TolX',PARAM.ResBreak,'Display','iter','UseParallel',1,'OutputFcn',@my_outfun);
-        end
-    elseif PARAM.parallel_jacobian_on==0
-        options = optimoptions('fsolve','TolFun',PARAM.ResBreak,'TolX',PARAM.ResBreak,'Display','iter');
-        if PARAM.plotRes==1
-            options = optimoptions('fsolve','TolFun',PARAM.ResBreak,'TolX',PARAM.ResBreak,'Display','iter','OutputFcn',@my_outfun);
-        end
-    else
-        error('Not implemented')
-    end
-    perturb = fsolve(fNonlinear,perturb,options);
-    [~,~,~,x,y,~,K1,K2] = fNonlinear(perturb);
-    
-else
     
 quit=0;count=0;
 while ~quit
@@ -78,13 +57,7 @@ while ~quit
     R = u;
     
     %Jacobian
-    if count==0 && PARAM.computeOnlyOneJacobian==1
-        disp('Compute Jacobian');
-        J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
-    elseif PARAM.computeOnlyOneJacobian==0
-        disp('Compute Jacobian');
-        J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
-    end
+    J = JacobianHandle(fNonlinear,perturb,PARAM.dh);
     
     %compute ellipticity
     L = max(x)-min(x);  B = 2*y(round(numel(y)/2));
@@ -112,9 +85,7 @@ while ~quit
     
 end
 
-end
-
-if PARAM.plotRes==1 && PARAM.call_fsolve==0
+if PARAM.plotRes==1
     manyRES = manyRES(1:count+1);
     figure(4)
     semilogy(1:count+1,manyRES,'-o')
