@@ -71,7 +71,7 @@ Run the script `tutorial_newton_method.m` to perform simulations after having se
 
 ## Stability analysis
 
-Once the fixed point has been found with the Newton Method, it is insightful to study the [stability](Stability_theory) of the fixed by computing the eigenvalues of the Jacobian. If positive eigenvalues are found, the fixed point is unstable. Run `` to compute the eigenvalue spectra of the solution from the previous point. Below, see the eigenvalues spectra, since all eigenvalues are negative, the solution is stable.
+Once the fixed point has been found with the Newton Method, it is insightful to study its [stability](Stability_theory) by computing the eigenvalues of the Jacobian. If positive eigenvalues are found, the fixed point is unstable. Run `tutorial_stability_analysys.m` to compute the eigenvalue spectra of the solution from the previous point. Below, see the eigenvalues spectra, since all eigenvalues are negative (the real part), the solution is stable. The inset shows the base state (solid black line) and the two least stable eignemodes overposed.
 
 ![](docs/stability.png)
 
