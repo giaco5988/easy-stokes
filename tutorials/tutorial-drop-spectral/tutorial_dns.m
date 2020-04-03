@@ -59,7 +59,7 @@ PARAM.n = round(ratioGrid*PARAM.dealiasing)+1;          % number of grid points
 PARAM.ODE = 2;          % 1 is ODE45, 2 is RK2, 3 is ODE23s, 4 is ODE23, 5 is ODE113, 6 is ODE23t, 7 is ODE15s, 8 is OD23tb
 Tstart = 0;             % beginning of simulation
 Tend = 500;             % end of simulation
-maxDT = 1e-2;           % set max time step
+maxDT = 1e-2;           % maximum time step if adaptive, otherwise simply time step
 initialDT = maxDT;      % set initial time step
 PARAM.Tend = Tend;      % end time
 

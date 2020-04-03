@@ -77,10 +77,16 @@ Once the fixed point has been found with the Newton Method, it is insightful to 
 
 ## Continuation method
 
-Based on Newton method, one can perform [continuation method](https://en.wikipedia.org/wiki/Numerical_continuation) in order to compute fixed points of the equations vs changes in parameters. Here we implement [pseudo-arclength continuation](https://en.wikipedia.org/wiki/Numerical_continuation#Pseudo-arclength_continuation) in order to turn atound bifurcation in the bifurcation diagram. Below see the bifurcation diagram for and extensional flow for lambda=5. Black dots indicate stable solutions and red dots unstable ones. They meet in a saddle node bifurcation for Ca~0.1.
+Based on Newton method, one can perform [continuation method](https://en.wikipedia.org/wiki/Numerical_continuation) in order to compute fixed points of the equations vs changes in parameters. Here we implement [pseudo-arclength continuation](https://en.wikipedia.org/wiki/Numerical_continuation#Pseudo-arclength_continuation) in order to turn atound bifurcation in the bifurcation diagram.
+
+Run `tutorial_continuation_method.m` to perform contination method varying the capillary number. Below, see the bifurcation diagram for and extensional flow for lambda=5, it plots the droplet half-length along the axis vs the capillary number. Black dots indicate stable solutions and red dots unstable ones. They meet in a saddle node bifurcation for Ca~0.1.
 
 ![](docs/bifurc.png)
 
 ## Edge tracking
 
-Edge tracking is a strategy to track unstable solutions living on the boundaries of the basin of attraction, which separates stable from unstable trajectories of the dynamical system, so called edge states.
+Edge tracking is a strategy that relies on DNS to track unstable solutions living on the boundaries of the basin of attraction, which separates stable from unstable trajectories of the dynamical system, so called edge states. The first step of edge stracking is to initialize to DNS simulations, one converging to the steady state (as the DNS previously shown in this tutorial) and the second developing instabilities, in this case dropley breakup. Afterwards, a third simulation is initialized by bisecting the two trajectories. Iterating this processes, one eventually lands on the edge state.
+
+Run `tutorial_edge tracking.m` to perform edge tracking, default values run edge stracking for Ca=0.1 and lambda=5. After running the script, run the post-processing with `post_processing_edge_tracking.m`. Below, see the trajectories of the dynamical system tracked with the droplet half-length along the axis. Performing bisection of the droplet shape, as soon as the trajectories depart from each others, we are able to approach the edge state. The low value of the residuals confirm the proximity to an (unstable) fixed point, the edge state.
+
+![](docs/plot_edge.png)
