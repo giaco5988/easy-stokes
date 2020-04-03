@@ -1,7 +1,7 @@
 %compute interface shape for droplet in extensional flow usinf Newton
 %method
 
-function newtonMethodSpectralXYmodesFunction(PARAM)
+function tutorial_newtonMethodSpectralXYmodesFunction(PARAM)
 
 %current directory
 here = pwd;
@@ -37,7 +37,7 @@ elseif PARAM.dropFrame==1
 end
 
 %nonlinear equation
-fNonlinear = @(unk) NormalVelocitySpectralVolumeXY2modes(unk,xBase,yBase,V0,xcm,PARAM);
+fNonlinear = @(unk) tutorial_NormalVelocitySpectralVolumeXY2modes(unk,xBase,yBase,V0,xcm,PARAM);
 [~,~,ny] = fNonlinear(perturb);
 
 %check initial shape
@@ -77,7 +77,13 @@ while ~quit
     disp(['Iteration ' num2str(count+1) ' res=' num2str(res) '  D=' num2str(D)]);
     legend('Solution','Initial guess')
     title(['Droplet shape Ca' num2str(PARAM.Ca) ' \lambda=' num2str(PARAM.visc)])
-    if count>PARAM.stop||res>1e1||isnan(res)==1; disp('no convergence'); break; end
+    if count>PARAM.stop||res>1e1||isnan(res)==1
+        disp('Limit number of iteration reached, stop!')
+        if res>1
+            disp('no convergence');
+        end
+        break;
+    end
     if res < PARAM.ResBreak; quit=1; disp('converged'); continue; end
     
     %count newton iteration

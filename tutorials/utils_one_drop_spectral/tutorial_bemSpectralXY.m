@@ -1,6 +1,6 @@
 %give the velocities on a droplet interface when the shape is known
 
-function [sol,nx,ny,res,K1,K2,Vdrop,K] = bemSpectralXY(x,y,PARAM)
+function [sol,nx,ny,res,K1,K2,Vdrop,K] = tutorial_bemSpectralXY(x,y,PARAM)
 
   %number of elements
   n = PARAM.n;

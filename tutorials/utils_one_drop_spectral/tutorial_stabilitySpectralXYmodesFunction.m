@@ -1,17 +1,21 @@
 %stability of droplet interface by numerical perturbing the Jacobian
 
-function stabilitySpectralXYmodesFunction(PARAM)
+function tutorial_stabilitySpectralXYmodesFunction(PARAM)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% OPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 plotModes = 2;                      % 0 does not plot eigenmodes, 1 plot all eigemodes, 2 plot unstable eigemodes
-overlap = 1;    ampli = -0.2;        % overlap unsatbale eigenmodes to base shape with arbitrary amplitude
+overlap = 1;    ampli = 0.2;        % overlap unsatbale eigenmodes to base shape with arbitrary amplitude
 eigIsPos = 1e-5;                    % consider eigenvalue as neutral
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+PARAM.algorithm = 5;    % stability
+PARAM.overlapMode = 0;  % do not overlap modes on the base shape
+
 %upload shape
 PARAMold = PARAM;
+PARAM.remeshStart = 0;
 [~,~,~,newCa,xBase,yBase,perturb,PARAM] = initialConditionDrop(PARAM);
 if PARAMold.uploadShape==1
     PARAMold.Ca = newCa;
@@ -36,10 +40,11 @@ V0 = PARAM.V0;
 xcm = CenterMassCurvAxisSpectral(x,y,PARAM);
 
 %print output
+PARAMold.ODE = 0;
 printToScreen(PARAMold);
 
 %nonlinear equation
-fNonlinear = @(unk) NormalVelocitySpectralVolumeXY2modes(unk,xBase,yBase,V0,xcm,PARAM);
+fNonlinear = @(unk) tutorial_NormalVelocitySpectralVolumeXY2modes(unk,xBase,yBase,V0,xcm,PARAM);
 
 %check that this is actualy a solution
 [u,nx,ny,x,y,uFirst,K1,K2] = fNonlinear(perturb);
@@ -55,32 +60,7 @@ grid on
 axis equal
 title(['Shape Ca=' num2str(PARAM.Ca) ' \lambda=' num2str(PARAM.visc)])
 
-%plot modes coefficients
-figure(5)
-%subplot(2,2,2)
-loglog(abs(xBase(2:2:end)))
-grid on
-hold on
-loglog(abs(yBase(1:2:end-1)))
-title('Modes coefficients')
-legend('x','y','Location','Best')
-xlabel('x')
-ylabel('C_n')
-
-%plot curvature
-figure(2)
-%subplot(2,2,2)
-plot(x,K1,'-')
-grid on
-hold on
-plot(x,K2,'-')
-plot(x,K1+K2,'-k')
-title('Curvature of the base state')
-legend('K_1','K_2','K_1+K_2','Location','Best')
-xlabel('x')
-ylabel('K')
-
-if max(abs([u; uFirst']))>PARAM.ResBreak
+if max(abs([u; uFirst']))>1e-10
     warning('Current shape it is not a solution because the residuals are too high')
     figure(10)
     loglog(abs(u(2:2:end)))
@@ -168,15 +148,11 @@ end
 
 %number of positive eigenvalues
 positive = sum(real(eigenval)>eigIsPos);
-if positive==1
-    disp(['There is ' num2str(positive) ' positive eigenvalue'])
-else
-    disp(['There are ' num2str(positive) ' positive eigenvalues'])
-end
+disp(['There are ' num2str(positive) ' positive eigenvalues'])
 
 if overlap==1
    
-    for k = 1:positive
+    for k = 1:2
         
         %perturb respect to base shape
         overlapMode = ampli*modePhysical(:,k)/max(modePhysical(:,k));
@@ -188,9 +164,6 @@ if overlap==1
         hold on
         plot([xEigen; flip(xEigen)],[yEigen; -flip(yEigen)])
         axis([-3 3 -3 3])
-        
-        %save(['xEigenCa=' num2str(PARAM.Ca) '.mat'],'xEigen')
-        %save(['yEigenCa=' num2str(PARAM.Ca) '.mat'],'yEigen')
     
     end
     

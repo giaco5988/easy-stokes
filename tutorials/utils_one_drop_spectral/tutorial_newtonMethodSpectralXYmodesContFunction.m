@@ -1,7 +1,7 @@
 %compute interface shape for droplet in extensional flow usinf Newton
 %method
 
-function newtonMethodSpectralXYmodesContFunction(PARAM)
+function tutorial_newtonMethodSpectralXYmodesContFunction(PARAM)
 
 %current directory
 here = pwd;
@@ -77,7 +77,7 @@ end
 sol = [perturb; PARAM.Ca];
 
 %nonlinear equation
-fNonlinear = @(unk) NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,sol(end));
+fNonlinear = @(unk) tutorial_NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,sol(end));
 [~,nx,ny,xBaseGrid,yBaseGrid] = fNonlinear(sol(1:end-1));
 
 %check initial shape
@@ -145,7 +145,7 @@ while (PARAM.Ca<CaBreakUp && PARAM.Ca>CaBreakDown) || countCont==1
         yBase = yBase(1:PARAM.dealiasing);
         
         %nonlinear equation
-        fNonlinear = @(unk) NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,sol(end));
+        fNonlinear = @(unk) tutorial_NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,sol(end));
         [~,nx,ny,xBaseGrid,yBaseGrid] = fNonlinear(sol(1:end-1));
         
         solPrev = sol;
@@ -185,7 +185,7 @@ while (PARAM.Ca<CaBreakUp && PARAM.Ca>CaBreakDown) || countCont==1
                 sol(1:end-1) = sol(1:end-1)-dir(1:end-1)*delta;    sol(end) = manyCa(countCont-1)-delta*sign(dir(end));
 
                 %nonlinear equation
-                fNonlinear = @(unk) NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,sol(end));
+                fNonlinear = @(unk) tutorial_NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,sol(end));
                 [~,nx,ny,xBaseGrid,yBaseGrid] = fNonlinear(sol(1:end-1));
 
                 solPrev = sol;
@@ -209,8 +209,8 @@ while (PARAM.Ca<CaBreakUp && PARAM.Ca>CaBreakDown) || countCont==1
         perturb = sol(1:end-1); PARAM.Ca = sol(end);
         
         %nonlinear equation
-        fNonlinear = @(unk) NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,PARAM.Ca);
-        fNonlinearCa = @(unk) NormalVelocitySpectralVolumeXYmodesCont(perturb,xBase,yBase,V0,xcm,PARAM,unk);
+        fNonlinear = @(unk) tutorial_NormalVelocitySpectralVolumeXYmodesCont(unk,xBase,yBase,V0,xcm,PARAM,PARAM.Ca);
+        fNonlinearCa = @(unk) tutorial_NormalVelocitySpectralVolumeXYmodesCont(perturb,xBase,yBase,V0,xcm,PARAM,unk);
 
         %NON LINEAR SOLUTION
         %normal velocity
