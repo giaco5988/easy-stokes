@@ -13,7 +13,7 @@ PARAMnewton = newtonResults.PARAM;
 %check mappings
 printError = 0;
 try
-    if (PARAM.chooseRemeshMapping~=PARAMnewton.chooseRemeshMapping) || (PARAM.howStrong~=PARAMnewton.howStrong)
+    if (PARAM.chooseMapping~=PARAMnewton.chooseMapping) || (PARAM.howStrong~=PARAMnewton.howStrong)
         printError = 1;
     end
 catch
