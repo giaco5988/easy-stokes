@@ -1,13 +1,15 @@
 %compute velocity normal to the interface, the interface is reconstructed
 %starting form modes coefficients
 
-function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityPipeModesBEM(perturbMode,xBase,yBase,V0,xcm,PARAM)
+function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityPipeModesBEM(perturbMode,xBase,yBase,PARAM)
 
     %% fixed parameters
     dropFrame = 1;
     PARAM.cfunction = 0;
     PARAM.visc = [0 0 0 PARAM.visc];
     PARAM.repulsiveForces = [0 0];
+    V0 = 4/3*pi*PARAM.alpha^3;
+    xcm = center_mass(xBase,yBase);
     
     %% numerics parameter
     L = 20;
