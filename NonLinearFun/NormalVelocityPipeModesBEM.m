@@ -113,5 +113,7 @@ function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityPipeModesBEM(pe
     if numel(uMode) ~= numel(perturbMode)-numel(firstMode)
         error('Number of fval has to be the same as DOF')
     end
+    
+    xGrid = xGrid'; yGrid = yGrid';
 
 end
