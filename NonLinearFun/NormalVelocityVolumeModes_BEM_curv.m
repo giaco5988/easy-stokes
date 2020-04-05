@@ -1,7 +1,11 @@
 %compute velocity normal to the interface, the interface is reconstructed
 %starting form modes coefficients
 
-function [uMode,nx,ny,xGrid,yGrid,u] = NormalVelocityVolumeModes_BEM_curv(perturbMode,xBase,yBase,V0,xcm,PARAM)
+function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityVolumeModes_BEM_curv(perturbMode,xBase,yBase,PARAM)
+
+    % set droplet volume and center of mass
+    V0 = 4/3*pi;
+    xcm = center_mass(xBase,yBase);
 
     % numerics parameter
     PARAM.typeBCstokes = 2;
@@ -23,13 +27,14 @@ function [uMode,nx,ny,xGrid,yGrid,u] = NormalVelocityVolumeModes_BEM_curv(pertur
     [nx,ny] = computeNormalVector(xBase',yBase',PARAM.orderVariableStokes(1),PARAM.orderGeometryStokes(1),PARAM.SPlinesType(1));
 
     %compute rho in symmetry axis
+    options = optimoptions('fsolve','TolFun',1e-15,'TolX',1e-15,'Display','none');
     if PARAM.dropFrame==0
         fVolume = @(firstMode) ModifyVolumeXYmodes(xBase,yBase,nx,ny,firstMode,V0,perturbMode);
+        firstMode = fsolve(fVolume,0,options);
     elseif PARAM.dropFrame==1
         fVolume = @(firstMode) ModifyVolumeXYmodesCM(xBase,yBase,nx,ny,firstMode,V0,perturbMode,xcm);
+        firstMode = fsolve(fVolume,[0; 0],options);
     end
-    options = optimoptions('fsolve','TolFun',1e-15,'TolX',1e-15,'Display','none');
-    firstMode = fsolve(fVolume,0,options);
     
     %build shape from mode
     perturbMode = [firstMode; perturbMode];
@@ -51,8 +56,11 @@ function [uMode,nx,ny,xGrid,yGrid,u] = NormalVelocityVolumeModes_BEM_curv(pertur
     
     % in drop frame
     if PARAM.dropFrame==1
-        uDrop = DropVelocityAxis(xGrid,yGrid,u);
-        u = nx.*(ux-uDrop) + ny.*uy;
+        uNormal = @(uDrop) nx.*(ux-uDrop) + ny.*uy;
+        fVelDrop = @(Udrop) DropVelocityAxisNewton(xGrid,yGrid,uNormal,Udrop);
+        options = optimoptions('fsolve','TolFun',1e-15,'TolX',1e-15,'Display','none');
+        VelDrop = fsolve(fVelDrop,DropVelocityAxis(xGrid,yGrid,u),options);
+        u = uNormal(VelDrop);
     end
     
     %compute velocity modes coeff
@@ -60,10 +68,32 @@ function [uMode,nx,ny,xGrid,yGrid,u] = NormalVelocityVolumeModes_BEM_curv(pertur
     uMode = chebcoeffs(uCheb);
     
     %take minus 1 velocty coefficient
-    if numel(uMode)<PARAM.dealiasing
-        uMode = [uMode(2:end); zeros(PARAM.dealiasing-numel(uMode),1)]; 
+    if PARAM.dropFrame==0
+        if numel(firstMode) ~= 1
+            error('Should have one compensating mode when in drop frame')
+        end
+        if numel(uMode)<PARAM.dealiasing
+%             uMode = [uMode(2:end); zeros(PARAM.dealiasing-numel(uMode),1)];
+            error('not implemented')
+        else
+            uMode = uMode(2:PARAM.dealiasing+1);
+        end
+    elseif PARAM.dropFrame==1
+        if numel(firstMode) ~= 2
+            error('Should have two compensating modes when in drop frame')
+        end
+        if numel(uMode)<PARAM.dealiasing
+%             uMode = [uMode(3:end); zeros(PARAM.dealiasing-numel(uMode),1)];
+            error('not implemented')
+        else
+            uMode = uMode(3:PARAM.dealiasing+2);
+        end
     else
-        uMode = uMode(2:PARAM.dealiasing);
+        error('Not valid parameter')
+    end
+    
+    if numel(uMode) ~= numel(perturbMode)-numel(firstMode)
+        error('Number of fval has to be the same as DOF')
     end
 
 end
