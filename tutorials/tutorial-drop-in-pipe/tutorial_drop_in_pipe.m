@@ -87,11 +87,11 @@ initialXY(2:2:end) = yInitial{4};
 PARAM.typeBCstokes = [8 0 0 7];           % 1 is prescribed normal velocity
                                           % 2 is prescibed normal stress
                                           % 3 is prescribed tangent velocity
-                                          % 4
-                                          % 5
-                                          % 6
-                                          % 7
-                                          % 8
+                                          % 4 is prescribed axial velocity
+                                          % 5 is prescribed normal velocity and tangent stress
+                                          % 6 is rigid body motion
+                                          % 7 is prescribed normal stress due to curvature and gravity
+                                          % 8 is prescribed axial stress and radial velocity
 PARAM.addFlow = 0;                        % add background flow (for example extensional flow)
 PARAM.velBCaxial = {nan 0 2*PARAM.Ca*(1-(yInitial{3}(1:end-1)+yInitial{3}(2:end))/2.^2) nan};
 PARAM.velBCradial = {0 0 0 nan};
