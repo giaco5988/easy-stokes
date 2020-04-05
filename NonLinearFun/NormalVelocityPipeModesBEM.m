@@ -3,27 +3,13 @@
 
 function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityPipeModesBEM(perturbMode,xBase,yBase,V0,xcm,PARAM)
 
-%     PARAM.typeBCstokes = 2;
-%     PARAM.panels = [1];
-%     PARAM.cfunction = 0;
-%     PARAM.STstokes = 1;
-%     PARAM.kernelFreeSpace = 1;  PARAM.posWall = [];
-%     PARAM.panelType = [2];
-%     PARAM.blockType = [2];
-%     PARAM.addFlow = 2;
-%     PARAM.orderGeometryStokes = 1;
-%     PARAM.orderVariableStokes = 1;
-%     PARAM.deflationBlock = [0];
-%     PARAM.repulsiveForces = [0];
-%     PARAM.SPlinesType = [2];
-%     PARAM.stressBC = {1};
-
+    %% fixed parameters
     dropFrame = 1;
     PARAM.cfunction = 0;
     PARAM.visc = [0 0 0 PARAM.visc];
     PARAM.repulsiveForces = [0 0];
     
-    % numerics parameter
+    %% numerics parameter
     L = 20;
     H = 1;
     nPerLenght = 10;
@@ -61,35 +47,37 @@ function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityPipeModesBEM(pe
     PARAM.D = [0 0 0 1];
     [xGeometry,yGeometry,PARAM] = buildGeometryPanelsGeneral(PARAM);
     
+    %% BCs
     PARAM.typeBCstokes = [8 0 0 2];
     PARAM.addFlow = 0;                        % add background flow (for example extensional flow)
     PARAM.velBCaxial = {nan 0 2*PARAM.Ca*(1-(yGeometry{3}(1:end-1)+yGeometry{3}(2:end))/2.^2) nan};
     PARAM.velBCradial = {0 0 0 nan};
     PARAM.stressBC = {0 nan nan 1};
 
-    % normal vector
+    % compute normal vector
     [nx,ny] = computeNormalVector(xBase',yBase',PARAM.orderVariableStokes(4),PARAM.orderGeometryStokes(4),PARAM.SPlinesType(4));
 
-    %compute rho in symmetry axis
+    %compute two complementary modes, fue to volume and center of mass
+    %constraint
     fVolume = @(firstMode) ModifyVolumeXYmodesCM(xBase,yBase,nx,ny,firstMode,V0,perturbMode,xcm);
     options = optimoptions('fsolve','TolFun',1e-15,'TolX',1e-15,'Display','none');
     firstMode = fsolve(fVolume,[0; 0],options);
     
-    %build shape from mode
+    % build shape from mode
     perturbMode = [firstMode; perturbMode];
     perturb = chebcoeffs2chebvals(perturbMode);
     perturbCheb = chebfun(perturb,[0 1]);
     perturb = perturbCheb(linspace(0,1,numel(xBase)));
     
-    %perturb respect to base shape
+    % perturb respect to base shape
     xGrid = xBase' + nx.*perturb;
     yGrid = yBase' + ny.*perturb;
     
-    %compute solution
+    % compute solution
     xGeometry{4} = xGrid;   yGeometry{4} = yGrid;
     [y,~,~,nnx,nny] = BEM_Stokes(xGeometry,yGeometry,PARAM);
     
-    %normal velocity
+    % normal velocity
     ux = y(2*sum(PARAM.n(1:3))+1:2:end-1);  uy = y(2*sum(PARAM.n(1:3))+2:2:end);
     nx = nnx{4}';   ny = nny{4}';
     u = nx.*ux + ny.*uy;
@@ -103,33 +91,21 @@ function [uMode,nx,ny,xGrid,yGrid,u,xBase,yBase] = NormalVelocityPipeModesBEM(pe
         u = uNormal(VelDrop);
     end
     
-    %compute velocity modes coeff
+    % compute velocity modes coeff
     uCheb = chebfun(u,[0 1],'equi');
     uMode = chebcoeffs(uCheb);
     
-    %take minus 1 velocity coefficient
-    if dropFrame==0
-        if numel(firstMode) ~= 1
-            error('Should have one compensating mode when in drop frame')
-        end
-        if numel(uMode)<PARAM.dealiasing
-%             uMode = [uMode(2:end); zeros(PARAM.dealiasing-numel(uMode),1)];
-            error('not implemented')
-        else
-            uMode = uMode(2:PARAM.dealiasing+1);
-        end
-    elseif dropFrame==1
-        if numel(firstMode) ~= 2
+    % run checks
+    if numel(firstMode) ~= 2
             error('Should have two compensating modes when in drop frame')
-        end
-        if numel(uMode)<PARAM.dealiasing
-%             uMode = [uMode(3:end); zeros(PARAM.dealiasing-numel(uMode),1)];
-            error('not implemented')
-        else
-            uMode = uMode(3:PARAM.dealiasing+2);
-        end
+    
+    end
+    
+    % take minus 2 velocity coefficient
+    if numel(uMode)<PARAM.dealiasing
+        error('not implemented')
     else
-        error('Not valid parameter')
+        uMode = uMode(3:PARAM.dealiasing+2);
     end
     
     if numel(uMode) ~= numel(perturbMode)-numel(firstMode)
